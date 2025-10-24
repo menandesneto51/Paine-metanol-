@@ -1,0 +1,278 @@
+<<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel de Monitoramento - Metanol (SES/MT)</title>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonte Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { font-family: 'Inter', sans-serif; position: relative; }
+
+    /* Marca d’água padrão (tela) */
+    #marca-agua {
+      position: fixed;
+      bottom: 20px;
+      right: 25px;
+      opacity: 0.08;
+      width: 120px;
+      z-index: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    /* Ajustes de impressão */
+    @media print {
+      .no-print { display: none !important; }
+
+      /* Centraliza e amplia o brasão no PDF */
+      #marca-agua {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px;
+        opacity: 0.12;
+      }
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-900 min-h-screen antialiased">
+  <div class="container mx-auto p-4 md:p-8 relative z-10">
+
+    <!-- LOGOMARCA CABEÇALHO -->
+    <div class="text-center mb-8 bg-blue-50/70 py-4 rounded-xl shadow-sm border border-blue-100">
+      <img src="https://i.imgur.com/TCv4dZj.png"
+           alt="Logomarcas CIEVS MT, Rede CIEVS e Governo de Mato Grosso"
+           class="mx-auto max-w-full h-auto rounded-lg">
+    </div>
+
+    <!-- TARJA AZUL INSTITUCIONAL -->
+    <div class="rounded-xl overflow-hidden shadow mb-6">
+      <div class="bg-blue-900 text-white text-center px-4 py-5">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          Vigilância, Alerta e Resposta – SES/MT
+        </h1>
+        <p class="text-base md:text-lg text-blue-100 mt-1">
+          Painel de Monitoramento — Intoxicação por Suspeita de Metanol
+        </p>
+      </div>
+    </div>
+
+    <!-- BARRA DE ATUALIZAÇÃO + AÇÕES -->
+    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 mb-8">
+      <div class="flex-1 bg-yellow-50 text-yellow-800 border border-yellow-200 text-center p-3 rounded-lg shadow-sm">
+        <span class="font-semibold">Última Atualização:</span>
+        <time id="ultimaAtualizacao" class="ml-1">—</time>
+      </div>
+      <div class="no-print flex gap-2 justify-end">
+        <button id="btnAtualizarHora"
+                class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow">
+          Atualizar horário
+        </button>
+        <button onclick="window.print()"
+                class="px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-900 text-white font-semibold shadow">
+          Imprimir / PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <!-- Total Notificado -->
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-blue-600 transform transition-transform hover:scale-105">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-500 uppercase">Total Notificado</span>
+          <svg class="h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0-3.741-.538m-4.01 0a9.094 9.094 0 0 0-3.741.538m7.752 0a11.935 11.935 0 0 1-7.752 0m7.752 0c-4.286 0-7.752-3.466-7.752-7.752S4.286 3.218 8.53 3.218m7.752 0c4.286 0 7.752 3.466 7.752 7.752S20.568 18.72 16.282 18.72"/>
+          </svg>
+        </div>
+        <div class="mt-4">
+          <span class="text-5xl font-extrabold text-gray-800">7</span>
+          <span class="text-lg text-gray-600 ml-2">casos</span>
+        </div>
+      </div>
+
+      <!-- Confirmado -->
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-red-600 transform transition-transform hover:scale-105">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-500 uppercase">Confirmado</span>
+          <svg class="h-8 w-8 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+          </svg>
+        </div>
+        <div class="mt-4">
+          <span class="text-5xl font-extrabold text-red-700">1</span>
+          <span class="text-lg text-gray-600 ml-2">caso</span>
+        </div>
+      </div>
+
+      <!-- Em Investigação -->
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-yellow-600 transform transition-transform hover:scale-105">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-500 uppercase">Em Investigação</span>
+          <svg class="h-8 w-8 text-yellow-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+          </svg>
+        </div>
+        <div class="mt-4">
+          <span class="text-5xl font-extrabold text-yellow-700">4</span>
+          <span class="text-lg text-gray-600 ml-2">casos</span>
+        </div>
+      </div>
+
+      <!-- Descartados -->
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md border-t-4 border-green-600 transform transition-transform hover:scale-105">
+        <div class="flex items-center justify-between">
+          <span class="text-sm font-medium text-gray-500 uppercase">Descartados</span>
+          <svg class="h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+          </svg>
+        </div>
+        <div class="mt-4">
+          <span class="text-5xl font-extrabold text-green-700">2</span>
+          <span class="text-lg text-gray-600 ml-2">casos</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETALHAMENTO -->
+    <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Situação Detalhada dos Casos</h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md border-l-8 border-red-600">
+        <h3 class="text-2xl font-semibold text-red-700 mb-4">Casos Ativos (Internados)</h3>
+        <ul class="space-y-4">
+          <li class="border-b border-gray-200 pb-4">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-red-600 text-white text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">CONFIRMADO</span>
+              Várzea Grande (Masculino, 24 anos)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-red-400">
+              Paciente segue internado. Laudo laboratorial confirmou a presença de metanol.
+            </p>
+          </li>
+          <li class="border-b border-gray-200 pb-4">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-yellow-500 text-gray-900 text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">EM INVESTIGAÇÃO</span>
+              Água Boa (Masculino, 27 anos)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-yellow-400">
+              Paciente permanece internado. Aguarda resultado laboratorial.
+            </p>
+          </li>
+          <li class="border-b border-gray-200 pb-4">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-yellow-500 text-gray-900 text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">EM INVESTIGAÇÃO</span>
+              Várzea Grande (Sexo, Idade)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-yellow-400">
+              Paciente permanece internado. Aguarda resultado laboratorial.
+            </p>
+          </li>
+          <li class="pb-2">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-yellow-500 text-gray-900 text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">EM INVESTIGAÇÃO</span>
+              Várzea Grande (HPSMVG) (Masculino, 30 anos)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-yellow-400">
+              Paciente internado. Aguarda resultado laboratorial.
+            </Várzea>
+          </li>
+        </ul>
+      </div>
+
+      <div class="bg-gray-50 p-6 rounded-lg shadow-md border-l-8 border-green-600">
+        <h3 class="text-2xl font-semibold text-green-700 mb-4">Casos Concluídos (Alta ou Descartados)</h3>
+        <ul class="space-y-4">
+          <li class="border-b border-gray-200 pb-4">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-yellow-500 text-gray-900 text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">EM INVESTIGAÇÃO</span>
+              Cuiabá (Feminino, 18 anos)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-yellow-400">
+              Paciente recebeu alta hospitalar em 23/10. O caso segue em investigação aguardando resultado laboratorial oficial.
+            </p>
+          </li>
+          <li class="border-b border-gray-200 pb-4">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-green-700 text-white text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">DESCARTADO</span>
+              Sorriso (Masculino, 30 anos)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-green-400">
+              Resultado laboratorial foi negativo para metanol.
+            </p>
+          </li>
+          <li class="pb-2">
+            <span class="flex items-center text-lg font-medium text-gray-800">
+              <span class="bg-green-700 text-white text-xs font-bold mr-3 px-2.5 py-0.5 rounded-full">DESCARTADO</span>
+              Peixoto de Azevedo (Feminino, 38 anos)
+            </span>
+            <p class="text-gray-700 mt-1 ml-4 pl-1 border-l-2 border-green-400">
+              Caso descartado pela equipe de vigilância.
+            </p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Marca d’água -->
+  <img id="marca-agua" src="https://upload.wikimedia.org/wikipedia/commons/7/73/Bras%C3%A3o_de_Mato_Grosso.svg" alt="Brasão de Mato Grosso">
+
+  <!-- SCRIPT DATA/HORA -->
+  <script>
+    const TZ = 'America/Cuiaba';
+    
+    function atualizarMomento() {
+      const el = document.getElementById('ultimaAtualizacao');
+      const agora = new Date();
+      
+      // 1. Formata apenas a data
+      const fmtData = new Intl.DateTimeFormat('pt-BR', {
+        dateStyle: 'long',
+        timeZone: TZ
+      });
+      
+      const dataFormatada = fmtData.format(agora);
+      const horaFixa = "às 10:00";
+      
+      // 2. Define o texto visível
+      el.textContent = `${dataFormatada} ${horaFixa}`;
+      
+      // 3. Define o atributo 'datetime' para 10:00 no fuso de Cuiabá (UTC-4)
+      // Pega as partes da data no fuso correto
+      const partesData = new Intl.DateTimeFormat('en-US', {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        timeZone: TZ
+      }).formatToParts(agora).reduce((acc, part) => {
+        acc[part.type] = part.value;
+        return acc;
+      }, {});
+
+      // Formata como YYYY-MM-DD
+      const ano = partesData.year;
+      const mes = partesData.month.padStart(2, '0');
+      const dia = partesData.day.padStart(2, '0');
+      
+      // Cria a string ISO para 10:00 no fuso -04:00 (Cuiabá)
+      const isoString = `${ano}-${mes}-${dia}T10:00:00-04:00`;
+      el.setAttribute('datetime', isoString);
+    }
+    
+    atualizarMomento();
+    
+    document.getElementById('btnAtualizarHora')
+      .addEventListener('click', atualizarMomento);
+  </script>
+</body>
+</html>
