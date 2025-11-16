@@ -1,37 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade Release Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 90%; margin: auto; }
-        header { background: #4CAF50; color: white; padding: 10px 0; text-align: center; }
-        .kpi, .export, .search, .risk-indicators { margin: 20px 0; }
-    </style>
+    <title>Paine Metanol</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Grade Release Dashboard (CR8 Notes Panel)</h1>
-    </header>
-    <div class="container">
-        <div class="kpi">
-            <h2>KPI for 100% Preceptors</h2>
-            <p>Details about KPI will go here.</p>
+    <div id="kpi-cards">
+        <div class="kpi-card" id="kpi-100-percent">
+            <h2>100% Preceptors KPI</h2>
+            <p>Details on 100% Preceptors count...</p>
         </div>
-        <div class="export">
-            <h2>Export to CSV</h2>
-            <button>Export Data</button>
-        </div>
-        <div class="search">
-            <h2>Student Search</h2>
-            <input type="text" placeholder="Search for students...">
-        </div>
-        <div class="risk-indicators">
-            <h2>Risk Indicators</h2>
-            <p>Risk indicators will be displayed here.</p>
+        <div class="kpi-card" id="kpi-optimized-layout">
+            <h2>Optimized 5-Card Layout</h2>
+            <p>Display of KPIs in optimized layout...</p>
         </div>
     </div>
+    <div id="csv-export">
+        <button id="export-csv">Export CSV</button>
+    </div>
+    <div id="student-search">
+        <input type="text" id="search-box" placeholder="Search Students...">
+    </div>
+    <div id="risk-indicators">
+        <h2>Risk Indicators</h2>
+        <p>Color-coded alerts for critical preceptors...</p>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
