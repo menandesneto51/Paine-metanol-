@@ -42,7 +42,26 @@ function renderMap(){const d=distribution(),r=document.getElementById("main");r.
 function openModal(id){const c=CASOS.find(x=>x.id===id),s=STATUS[c.status]||{icon:"•",color:"#64748b"};document.getElementById("modal-card").innerHTML=`<div class="mh"><div><h2 style="margin:0">Detalhes do caso</h2><span class="badge" style="--c:${s.color};margin-top:10px">${s.icon} ${esc(c.status)}</span></div><button class="close" onclick="closeModal()">&times;</button></div>${death(c)}<div class="details"><div class="detail"><b>Residência</b>${esc(c.residencia)}</div><div class="detail"><b>Internação</b>${esc(c.internacao)}</div><div class="detail"><b>Perfil</b>${esc(c.perfil)}</div><div class="detail"><b>Notificação</b>${esc(c.data)}</div><div class="detail"><b>Gravidade</b>${esc(c.gravidade)}</div><div class="detail"><b>Evolução</b>${esc(c.evolucao)}</div><div class="detail"><b>Hospitalização</b>${esc(c.hospitalizou)}</div><div class="detail"><b>Permanece hospitalizado</b>${esc(c.internado)}</div><div class="detail"><b>Recebeu antídoto</b>${esc(c.antidoto)}</div><div class="detail"><b>Óbito?</b>${esc(c.obito)}</div><div class="detail"><b>Tipo de óbito</b>${esc(c.tipoObito)}</div><div class="detail"><b>Data do óbito</b>${esc(c.dataObito||"Não informada")}</div></div><div class="dsc">${esc(c.descricao)}</div>${c.observacoes?`<div class="notes"><b>Observações:</b> ${esc(c.observacoes)}</div>`:""}`;document.getElementById("modal").classList.remove("hidden")}
 function closeModal(){document.getElementById("modal").classList.add("hidden")}
 document.getElementById("modal").onclick=e=>{if(e.target.id==="modal")closeModal()};document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
-fetch("./casos_metanol.json?v=20260806",{cache:"no-store"}).then(r=>{if(!r.ok)throw Error("HTTP "+r.status);return r.json()}).then(d=>{CASOS=d;renderKpis();renderTabs();renderMain()}).catch(e=>{document.getElementById("main").innerHTML=`<div class="error"><strong>Não foi possível carregar a base de dados.</strong><br>${esc(e.message)}</div>`});
+async function carregarBase(){
+  const fontes=[
+    "https://raw.githubusercontent.com/menandesneto51/Paine-metanol-/main/casos_metanol.json?v="+Date.now(),
+    "./casos_metanol.json?v="+Date.now()
+  ];
+  let ultimoErro=null;
+  for(const url of fontes){
+    try{
+      const resposta=await fetch(url,{cache:"no-store"});
+      if(!resposta.ok)throw new Error("HTTP "+resposta.status+" em "+url);
+      const dados=await resposta.json();
+      if(!Array.isArray(dados))throw new Error("Formato de dados inválido.");
+      return dados;
+    }catch(erro){
+      ultimoErro=erro;
+    }
+  }
+  throw ultimoErro||new Error("Não foi possível carregar a base.");
+}
+carregarBase().then(d=>{CASOS=d;renderKpis();renderTabs();renderMain()}).catch(e=>{document.getElementById("main").innerHTML=`<div class="error"><strong>Não foi possível carregar a base de dados.</strong><br>${esc(e.message)}</div>`});
 </script>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onload="if(tab==='mapa'&&CASOS.length)renderMap()"></script>
 </body>
