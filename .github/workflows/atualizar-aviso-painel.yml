@@ -1,0 +1,39 @@
+name: Atualizar aviso do painel
+
+on:
+  push:
+    paths:
+      - '.github/workflows/atualizar-aviso-painel.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Atualizar texto institucional
+        shell: python
+        run: |
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          antigo = 'Dados carregados da planilha atualizada em 06/08/2026 — 19 registros'
+          novo = ('Dados carregados da planilha atualizada em 06/08/2026. '
+                  'O painel será atualizado diariamente, de forma automática, às 11h, '
+                  'a partir dos dados apresentados pela área técnica da SUVSA-MT.')
+          if antigo not in text:
+              raise SystemExit('Texto original não encontrado no index.html.')
+          path.write_text(text.replace(antigo, novo, 1), encoding='utf-8')
+
+      - name: Commit da atualização
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "chore: atualiza aviso de periodicidade do painel"
+          git push
